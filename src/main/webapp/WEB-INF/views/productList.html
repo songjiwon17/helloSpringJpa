@@ -120,5 +120,10 @@
         </tbody>
     </table>
 
+    <hr>
+    <footer style="text-align: center; color: #666; padding: 20px;">
+        <p th:text="${'실습 수행: ' + #temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm:ss') + ' | 학번: 2371488 | 성명: 송지원'}"></p>
+    </footer>
+
 </body>
 </html>
