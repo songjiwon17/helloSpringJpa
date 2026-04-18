@@ -14,15 +14,18 @@ public class CategoryRepository {
     @PersistenceContext
     private EntityManager em;
 
+    // 새로운 카테고리를 저장하거나 수정하는 save()메서드
     public Category save(Category category) {
         em.persist(category);
         return category;
     }
 
+    // PK인 ID로 특정 카테고리 조회하는 findById()메서드
     public Optional<Category> findById(Long id) {
         return Optional.ofNullable(em.find(Category.class, id));
     }
 
+    // 모든 카테고리를 ID 순서대로 정렬하여 조회하는 findAll()메서드
     public List<Category> findAll() {
         return em.createQuery("SELECT c FROM Category c ORDER BY c.id", Category.class)
                 .getResultList();
@@ -36,6 +39,19 @@ public class CategoryRepository {
                 .getResultList();
         return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
     }
+
+    // 삭제 전 연결 상품 수 확인하는 countProductsByCategoryId()메서드 (COUNT 쿼리)
+    public long countProductsByCategoryId(Long categoryId) {
+        return em.createQuery(
+                        "SELECT COUNT(p) FROM Product p WHERE p.category.id = :id",
+                        Long.class)
+                .setParameter("id", categoryId).getSingleResult();
+    }
+
+    // PK인 ID로 특정 카테고리 삭제하는 delete()메서드
+    public void delete(Long id) {
+        Category c = em.find(Category.class, id); if (c != null) em.remove(c); }
+
 
     // JOIN FETCH: N+1 문제 방지 (Category + Products 한 번에 로드)
     public Optional<Category> findByIdWithProducts(Long id) {
